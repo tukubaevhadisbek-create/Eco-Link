@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ecolink-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ecolink
+      POSTGRES_PASSWORD: ecolink
+      POSTGRES_DB: ecolink
+    ports:
+      - "5434:5432"
+    volumes:
+      - ecolink-data:/var/lib/postgresql/data
+      - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecolink -d ecolink"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  ecolink-data:

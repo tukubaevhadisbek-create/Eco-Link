@@ -1,0 +1,27 @@
+# Blueprint для Render: веб-сервис + PostgreSQL.
+# ADMIN_PHONE и ADMIN_PASSWORD задайте в панели Render (Environment) — в репозиторий их не пишем.
+databases:
+  - name: ecolink-db
+    plan: free
+    databaseName: ecolink
+    user: ecolink
+
+services:
+  - type: web
+    name: ecolink
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ecolink-db
+          property: connectionString
+      - key: ADMIN_PHONE
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
